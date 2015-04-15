@@ -89,4 +89,22 @@ public class BookKeeperTest
 		
 	}
 	
+	@Test
+	public void giveInvoiceRequestWithNothing_shouldGetInvoiceWithNoPosition() 
+	{
+
+		InvoiceFactory invoiceFactory = mock(InvoiceFactory.class);
+		TaxPolicy taxPolicy = mock(TaxPolicy.class);
+		
+		BookKeeper bookKeeper = new BookKeeper(invoiceFactory);
+		Id clientId = new Id("K1");
+		ClientData clientData = new ClientData(Id.generate(), "Data");
+		when(invoiceFactory.create(clientData)).thenReturn(new Invoice(clientId, clientData));
+		InvoiceRequest invoiceRequest = new InvoiceRequest(clientData);		
+		Invoice resultInvoice = bookKeeper.issuance(invoiceRequest, taxPolicy);
+		int result = resultInvoice.getItems().size();
+		assertThat(result, is(0));
+		
+	}
+	
 }
