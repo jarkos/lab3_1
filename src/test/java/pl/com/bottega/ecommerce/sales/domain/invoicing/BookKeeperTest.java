@@ -107,4 +107,42 @@ public class BookKeeperTest
 		
 	}
 	
+	@Test
+	public void giveInvoiceRequestWithOneStandardProductAndOneFoodProduct_shouldInvokeCalculateTaxMethodForFoodOnce() 
+	{
+
+		InvoiceFactory invoiceFactory = mock(InvoiceFactory.class);
+		TaxPolicy taxPolicy = mock(TaxPolicy.class);
+		
+		BookKeeper bookKeeper = new BookKeeper(invoiceFactory);
+		Id clientId = new Id("K1");
+		ClientData clientData = new ClientData(Id.generate(), "Data");
+		when(invoiceFactory.create(clientData)).thenReturn(new Invoice(clientId, clientData));
+		
+		ProductType productStandard = ProductType.STANDARD;
+		ProductType productFood = ProductType.FOOD;
+		BigDecimal denomination = new BigDecimal(10);
+		Money money = new Money(denomination);
+		when(taxPolicy.calculateTax(productStandard, money)).thenReturn(new Tax(money, "opis1"));
+		when(taxPolicy.calculateTax(productFood, money)).thenReturn(new Tax(money, "opis2"));
+		//product1
+		Id productId1 = new Id("P1");
+		Date date1 = new Date(2014);
+		ProductData productData1 = new ProductData(productId1,money,"phone1",productStandard,date1);
+		//product2
+		Id productId2 = new Id("P2");
+		Date date2 = new Date(2014);
+		ProductData productData2 = new ProductData(productId2,money,"pizza",productFood,date2);
+		
+		RequestItem requestItem1 = new RequestItem(productData1, 1,money);
+		RequestItem requestItem2 = new RequestItem(productData2, 1,money);
+		InvoiceRequest invoiceRequest = new InvoiceRequest(clientData);
+		invoiceRequest.add(requestItem1);
+		invoiceRequest.add(requestItem2);
+		
+		Invoice resultInvoice = bookKeeper.issuance(invoiceRequest, taxPolicy);
+		Mockito.verify(taxPolicy, Mockito.times(1)).calculateTax(productFood, money);
+		
+	}
+	
 }
