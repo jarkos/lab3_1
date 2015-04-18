@@ -1,24 +1,22 @@
 package pl.com.bottega.ecommerce.sales.domain.invoicing;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
 import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
 import java.util.Date;
 
-import org.hamcrest.core.IsSame;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import pl.com.bottega.ecommerce.canonicalmodel.publishedlanguage.ClientData;
 import pl.com.bottega.ecommerce.canonicalmodel.publishedlanguage.Id;
 import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductData;
 import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductType;
 import pl.com.bottega.ecommerce.sharedkernel.Money;
-
-import org.mockito.Mockito;
-import org.mockito.verification.VerificationMode;
 
 public class BookKeeperTest 
 {
@@ -30,8 +28,8 @@ public class BookKeeperTest
 	@Before
 	public void setUp() throws Exception 
 	{
-		InvoiceFactory invoiceFactory = mock(InvoiceFactory.class);
-		TaxPolicy taxPolicy = mock(TaxPolicy.class);
+		invoiceFactory = mock(InvoiceFactory.class);
+		taxPolicy = mock(TaxPolicy.class);
 
 		bookKeeper = new BookKeeper(invoiceFactory);
 		Id clientId = new Id("K1");
@@ -43,13 +41,11 @@ public class BookKeeperTest
 	public void giveInvoiceRequestWithOnePosition_shouldGetInvoiceWithOnePosition() 
 	{
 		ProductType productType = ProductType.STANDARD;
-		BigDecimal denomination = new BigDecimal(10);
-		Money money = new Money(denomination);
+		Money money = new Money(10);
+		
 		when(taxPolicy.calculateTax(productType, money)).thenReturn(new Tax(money, "opis"));
 		
-		Id productId = new Id("P2");
-		Date date = new Date(2014);
-		ProductData productData = new ProductData(productId,money,"phone",productType,date);		
+		ProductData productData = new ProductDataBuilder().withName("phone").withMoney(10).build();
 		
 		RequestItem requestItem = new RequestItem(productData, 1,money);
 		InvoiceRequest invoiceRequest = new InvoiceRequest(clientData);
@@ -69,13 +65,9 @@ public class BookKeeperTest
 		Money money = new Money(denomination);
 		when(taxPolicy.calculateTax(productType, money)).thenReturn(new Tax(money, "opis"));
 		//product1
-		Id productId1 = new Id("P1");
-		Date date1 = new Date(2014);
-		ProductData productData1 = new ProductData(productId1,money,"phone1",productType,date1);
+		ProductData productData1 = new ProductDataBuilder().withName("phone").withMoney(10).build();
 		//product2
-		Id productId2 = new Id("P2");
-		Date date2 = new Date(2014);
-		ProductData productData2 = new ProductData(productId2,money,"phone2",productType,date2);
+		ProductData productData2 = new ProductDataBuilder().withName("phone2").withMoney(10).build();
 		
 		RequestItem requestItem1 = new RequestItem(productData1, 1,money);
 		RequestItem requestItem2 = new RequestItem(productData2, 1,money);
