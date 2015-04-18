@@ -30,11 +30,10 @@ public class BookKeeperTest
 	{
 		invoiceFactory = mock(InvoiceFactory.class);
 		taxPolicy = mock(TaxPolicy.class);
-
 		bookKeeper = new BookKeeper(invoiceFactory);
-		Id clientId = new Id("K1");
-		clientData = new ClientData(Id.generate(), "Data");
-		when(invoiceFactory.create(clientData)).thenReturn(new Invoice(clientId, clientData));
+		Id clientID = new Id("K1");
+		clientData = new ClientDataBuilder().withId(clientID).withName("Klient1").build();
+		when(invoiceFactory.create(clientData)).thenReturn(new Invoice(clientID, clientData));
 	}
 	
 	@Test
@@ -64,6 +63,7 @@ public class BookKeeperTest
 		BigDecimal denomination = new BigDecimal(10);
 		Money money = new Money(denomination);
 		when(taxPolicy.calculateTax(productType, money)).thenReturn(new Tax(money, "opis"));
+		
 		//product1
 		ProductData productData1 = new ProductDataBuilder().withName("phone").withMoney(10).build();
 		//product2
