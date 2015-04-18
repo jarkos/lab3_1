@@ -6,8 +6,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
-import java.util.Date;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -46,7 +44,11 @@ public class BookKeeperTest
 		
 		ProductData productData = new ProductDataBuilder().withName("phone").withMoney(10).build();
 		
-		RequestItem requestItem = new RequestItem(productData, 1,money);
+		RequestItem requestItem = new RequestItemBuilder().withProductData(productData)
+															.withQuantity(1)
+															.withMoney(money)
+															.build();
+		
 		InvoiceRequest invoiceRequest = new InvoiceRequest(clientData);
 		invoiceRequest.add(requestItem);
 		
@@ -69,8 +71,16 @@ public class BookKeeperTest
 		//product2
 		ProductData productData2 = new ProductDataBuilder().withName("phone2").withMoney(10).build();
 		
-		RequestItem requestItem1 = new RequestItem(productData1, 1,money);
-		RequestItem requestItem2 = new RequestItem(productData2, 1,money);
+		RequestItem requestItem1 = new RequestItemBuilder().withProductData(productData1)
+														  .withQuantity(1)
+														  .withMoney(money)
+														   .build();
+		
+		RequestItem requestItem2 = new RequestItemBuilder().withProductData(productData2)
+														   .withQuantity(1)
+														   .withMoney(money)
+														   .build();
+		
 		InvoiceRequest invoiceRequest = new InvoiceRequest(clientData);
 		invoiceRequest.add(requestItem1);
 		invoiceRequest.add(requestItem2);
